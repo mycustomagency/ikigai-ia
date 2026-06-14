@@ -76,7 +76,7 @@ export default function Home() {
       const updatedMessages = [...newMessages, assistantMsg]
       setMessages(updatedMessages)
 
-      if (reply.includes('complète ✓')) {
+      if (reply.includes('complète ✓') || reply.includes('complete ✓')) {
         const newHistories = [...phaseHistories]
         newHistories[currentPhase] = updatedMessages
         setPhaseHistories(newHistories)
@@ -111,10 +111,9 @@ export default function Home() {
   const generateSynthesis = async () => {
     setShowSynthesis(false)
     setIsLoading(true)
-    const allHistory = phaseHistories.flat().filter(m => m.content !== 'Commence la session.')
-    try {
-      const synthesis = await callAPI([], 0, true, allHistory)
-      setMessages(prev => [...prev, {
+const allHistory = phaseHistories.flat().filter(m => m.content !== 'Commence la session.' && m.content.trim() !== '')
+const historyToSend = allHistory.length > 0 ? allHistory : messages.filter(m => m.content.trim() !== '')    try {
+const synthesis = await callAPI([], 0, true, historyToSend)      setMessages(prev => [...prev, {
         role: 'assistant',
         content: `✨ **TA SYNTHÈSE IKIGAÏ**\n\n${synthesis}`
       }])
